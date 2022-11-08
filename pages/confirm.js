@@ -1,26 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import tw from 'tailwind-styled-components';
 import Map from './components/map';
-export default function confirm() {
+import RideSelector from './components/RideSelector';
+import { useRouter } from 'next/router';
 
-  const [pickup,setPickup] = useState();
-  const [drop,setDrop] = useState();
+export default function Confirm() {
+  const router = useRouter();
+  const { pickup, drop } = router.query;
 
-  const getDropCoordinates = () => {
-    const dropLocation = 'Namakkal';
+
+  const [pickupCoordinates,setPickupCoordinates] = useState();
+  const [dropCoordinates,setDropCoordinates] = useState();
+
+  const getDropCoordinates = (dropLocation) => {
     fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${dropLocation}.json?` +
     new URLSearchParams({
-      access_token : "pk.eyJ1IjoiYXJhdmluZC1hayIsImEiOiJjbDhuZW5qMWgwczExM3Zxd3Znc3ZkaDYzIn0.gj9rfK_f9bS5LIJsajJfrQ",
+      access_token : process.env.accessToken,
       limit:1
     })
     )
       .then(res => res.json())
       .then((data) => {
-        setDrop(data.features[0].center)
+        setDropCoordinates(data.features[0].center)
       }); 
   }
-  const getPickupCoordinates = () => {
-    const pickupLocation = 'Salem,TamilNadu';
+  const getPickupCoordinates = (pickupLocation) => {
     fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${pickupLocation}.json?` +
     new URLSearchParams({
       access_token : "pk.eyJ1IjoiYXJhdmluZC1hayIsImEiOiJjbDhuZW5qMWgwczExM3Zxd3Znc3ZkaDYzIn0.gj9rfK_f9bS5LIJsajJfrQ",
@@ -28,30 +32,43 @@ export default function confirm() {
     })
     )
       .then(res => res.json())
-      .then(data => {setPickup(data.features[0].center)});
+      .then(data => {setPickupCoordinates(data.features[0].center)});
   }
+
+
   useEffect(() => {
-    getDropCoordinates();
-    getPickupCoordinates();
-  }, [])
+    getPickupCoordinates(pickup);
+    getDropCoordinates(drop);
+
+  }, [pickup,drop])
   return (
     <Wrapper>
-        <Map
-        pickupCoordinates={pickup}
-        dropCoordinates={drop}
-        />
+        {/* <Map
+        pickupCoordinates={pickupCoordinates}
+        dropCoordinates={dropCoordinates}
+        /> */}
+        <MapContainer></MapContainer>
         <RideContainer>
-            <InfoText>Choose a ride or swipe up for more</InfoText>
+            <RideSelector />
+            <ConfirmButtonContainer>
+              <ConfirmButton>
+                Confirm Button
+              </ConfirmButton>
+            </ConfirmButtonContainer>
+            
         </RideContainer>
     </Wrapper>
   )
 }
 
 
-const Wrapper = tw.div`h-screen bg-white flex flex-col`
-const MapContainer = tw.div`flex-1 bg-gray-600`
+const Wrapper = tw.div`h-screen bg-white`
+const MapContainer = tw.div`flex-1 bg-gray-600 h-1/2`
 
-const RideContainer = tw.div`flex-1`
-const InfoText = tw.div`text-sm text-center text-zinc-500 py-1 border border-b-1 border-gray-300`
+const RideContainer = tw.div`flex-1 h-1/2`
 
+
+
+const ConfirmButtonContainer = tw.div`p-2 border-t-2 border-gray-200`
+const ConfirmButton = tw.div`bg-black text-white text-center py-3`
 

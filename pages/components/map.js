@@ -24,13 +24,11 @@ export default function Map({pickupCoordinates,dropCoordinates}) {
       padding:60
     })
   }
-  
-  
- 
   },[pickupCoordinates,dropCoordinates]);
 
   const addToMap = (map,coordinates) => {
-     const marker1 = new mapboxgl.Marker().setLngLat(coordinates).addTo(map); 
+     const marker1 = new mapboxgl.Marker().setLngLat(coordinates);
+     marker1.addTo(map) 
   }
 
   return (
@@ -43,4 +41,4 @@ export default function Map({pickupCoordinates,dropCoordinates}) {
 
 
 const Wrapper = tw.div`
-bg-red-500 flex-1`
+bg-red-500 flex-1 h-1/2`

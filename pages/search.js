@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import tw from 'tailwind-styled-components';
 import Link from 'next/link';
 
 export default function Search() {
+
+    const [pickup,setPickup] = useState("");
+    const [drop,setDrop] = useState("");
   return (
     <Wrapper>
         <ButtonContainer>
@@ -18,8 +21,8 @@ export default function Search() {
             </FromToIcon>
 
             <InputBoxes>
-                <Input placeholder='Enter Pickup Location' />
-                <Input placeholder='Enter Drop Location' />
+                <Input placeholder='Enter Pickup Location' value={pickup} onChange={(e) => setPickup(e.target.value)} />
+                <Input placeholder='Enter Drop Location' value={drop} onChange={(e) => setDrop(e.target.value)} />
             </InputBoxes>
 
             <AddStopButton>
@@ -31,9 +34,13 @@ export default function Search() {
             <StarIcon src="https://cdn3.iconfinder.com/data/icons/sympletts-free-sampler/128/star-512.png" />
             Saved Places
         </SavedPlaces>
+        <Link href={{pathname : '/confirm', query: { pickup, drop }}}>
         <ConfirmContainer>
+            <ConfirmButton disabled={!(pickup && drop)}>
            Confirm Location
+           </ConfirmButton>
         </ConfirmContainer>
+        </Link>
 
     </Wrapper>
   )
@@ -65,3 +72,4 @@ bg-white h-16 mt-4 p-4 flex text-xl items-center`
 const StarIcon = tw.img`bg-gray-400 h-6 w-6 rounded-full mr-4 outline-none border-none`
 
 const ConfirmContainer = tw.div`mt-4 mx-2 bg-black text-white text-center py-3 rounded-lg cursor-pointer`
+const ConfirmButton = tw.button`w-full`
